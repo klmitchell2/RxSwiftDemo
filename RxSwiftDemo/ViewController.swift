@@ -12,10 +12,8 @@ import RxCocoa
 
 /*
  - Can use Scan() instead of Reduce(), accomplishes the same thing.
- 
-
+ - This branch shows the removal of ALL stored state in this class
  */
-
 
 class ViewController: UIViewController {
 
