@@ -10,6 +10,10 @@ import UIKit
 import RxSwift
 import RxCocoa
 
+/*
+ Generally speaking, each class/struct that is doing subscribe()ing gets one shared DisposeBag, and all subscriptions get added to it. That’s it.
+ */
+
 class ViewController: UIViewController {
 
     // MARK: Outlets
@@ -25,15 +29,13 @@ class ViewController: UIViewController {
             .debug("button tap")
             .subscribe(onNext: { [unowned self] _ in
                 self.onButtonTap()
-            }).addDisposableTo(disposeBag)
+            }).disposed(by: disposeBag)
     }
     
     @IBAction private func onButtonTap() {
         self.count += 1
         self.label.text = "You have tapped that button \(count) times."
     }
-
-
 }
 
 

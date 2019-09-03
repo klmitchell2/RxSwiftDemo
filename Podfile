@@ -6,8 +6,8 @@ target 'RxSwiftDemo' do
   use_frameworks!
 
   # Pods for RxSwiftDemo
-  pod 'RxSwift'
-  pod 'RxCocoa'
+  pod 'RxSwift', '~> 5'
+  pod 'RxCocoa', '~> 5'
 
   target 'RxSwiftDemoTests' do
     inherit! :search_paths
