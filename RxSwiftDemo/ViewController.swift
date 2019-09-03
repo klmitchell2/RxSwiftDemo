@@ -11,8 +11,12 @@ import RxSwift
 import RxCocoa
 
 /*
- Generally speaking, each class/struct that is doing subscribe()ing gets one shared DisposeBag, and all subscriptions get added to it. That’s it.
+  - Generally speaking, each class/struct that is doing subscribe()ing gets one shared DisposeBag, and all subscriptions get added to it. That’s it.
+  - A ControlEvent is a special kind of something else: an Observable. A control Event is a wrapper of TouchUpInside:
+  - Generally speaking, the last operation you’ll perform on an Observable—on a stream—is to take action based on that stream signaling. In our case, how do we take action every time the button is tapped?
+
  */
+
 
 class ViewController: UIViewController {
 
