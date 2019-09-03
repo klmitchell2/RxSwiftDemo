@@ -11,9 +11,8 @@ import RxSwift
 import RxCocoa
 
 /*
-  - Generally speaking, each class/struct that is doing subscribe()ing gets one shared DisposeBag, and all subscriptions get added to it. That’s it.
-  - A ControlEvent is a special kind of something else: an Observable. A control Event is a wrapper of TouchUpInside:
-  - Generally speaking, the last operation you’ll perform on an Observable—on a stream—is to take action based on that stream signaling. In our case, how do we take action every time the button is tapped?
+ - Can use Scan() instead of Reduce(), accomplishes the same thing.
+ 
 
  */
 
@@ -26,19 +25,22 @@ class ViewController: UIViewController {
     
     // MARK: ivars
     private let disposeBag = DisposeBag()
-    private var count = 0
     
     override func viewDidLoad() {
         self.button.rx.tap
-            .debug("button tap")
-            .subscribe(onNext: { [unowned self] _ in
-                self.onButtonTap()
-            }).disposed(by: disposeBag)
-    }
-    
-    @IBAction private func onButtonTap() {
-        self.count += 1
-        self.label.text = "You have tapped that button \(count) times."
+            .debug("Button Tap")
+            .scan(0) { (priorValue, _) in
+                return priorValue + 1
+            }
+            .debug("after scan")
+            .map({ currentCount in
+                return "You have tapped that button \(currentCount) times"
+            })
+            .debug("after debug")
+            .subscribe(onNext: { [weak self] newText in
+                return self?.label.text = newText
+            })
+            .disposed(by: disposeBag)
     }
 }
 
