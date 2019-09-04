@@ -11,8 +11,9 @@ import RxSwift
 import RxCocoa
 
 /*
- - Can use Scan() instead of Reduce(), accomplishes the same thing.
- - This branch shows the removal of ALL stored state in this class
+- First, we have to create a Driver. The general way to do this is to simply convert an Observable to a Driver using the Observable's asDriver()
+-  Given that, it doesn’t usually matter where the conversion to a Driver happens in a chain. I could have done it before the scan above, if I preferred. Just remember everything that comes after will be on the main thread.
+-
  */
 
 class ViewController: UIViewController {
@@ -25,19 +26,15 @@ class ViewController: UIViewController {
     private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
-        self.button.rx.tap
-            .debug("Button Tap")
-            .scan(0) { (priorValue, _) in
+        self.button.rx.tap //Start with UIButton Tap
+            .scan(0) { (priorValue, _) in //scan all occurences; start with  and add 1 each time
                 return priorValue + 1
             }
-            .debug("after scan")
+            .asDriver(onErrorJustReturn: 0) //convert the scan to a Driver to ensure we never fail and are on the main thread
             .map({ currentCount in
-                return "You have tapped that button \(currentCount) times"
+                return "You have tapped that button \(currentCount) times" //convert Int to String
             })
-            .debug("after debug")
-            .subscribe(onNext: { [weak self] newText in
-                return self?.label.text = newText
-            })
+            .drive(self.label.rx.text) //push the value onto a UILabel
             .disposed(by: disposeBag)
     }
 }
