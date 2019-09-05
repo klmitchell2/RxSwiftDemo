@@ -24,19 +24,36 @@ class ViewController: UIViewController {
     
     // MARK: ivars
     private let disposeBag = DisposeBag()
-    
+    private lazy var viewModel: ViewModel = {
+        return ViewModel(buttonTapped: self.button.rx.tap
+            .asObservable()
+            .debug("after asObservable"))
+    }()
+
     override func viewDidLoad() {
-        self.button.rx.tap //Start with UIButton Tap
-            .scan(0) { (priorValue, _) in //scan all occurences; start with  and add 1 each time
-                return priorValue + 1
+        setupBindings()
+    }
+
+    func setupBindings() {
+        self.viewModel.count
+            .asDriver(onErrorJustReturn: 0)
+            .debug("After asDriver")
+            .map { currentCount in
+                return "taps coming from viewModel: \(currentCount)"
             }
-            .asDriver(onErrorJustReturn: 0) //convert the scan to a Driver to ensure we never fail and are on the main thread
-            .map({ currentCount in
-                return "You have tapped that button \(currentCount) times" //convert Int to String
-            })
-            .drive(self.label.rx.text) //push the value onto a UILabel
+            .debug("After map")
+            .drive(self.label.rx.text)
             .disposed(by: disposeBag)
     }
 }
 
+class ViewModel {
+    let count: Observable<Int>
 
+    init(buttonTapped: Observable<Void>) {
+        self.count = buttonTapped.scan(0, accumulator: { (prevValue, _) in
+            return prevValue + 1
+        })
+        .debug("After scan")
+    }
+}
