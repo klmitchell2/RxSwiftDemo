@@ -181,6 +181,7 @@
 				TargetAttributes = {
 					C9941C381E00E6EA004C1489 = {
 						CreatedOnToolsVersion = 8.2;
+						DevelopmentTeam = 3SMCZ4CV84;
 						ProvisioningStyle = Automatic;
 					};
 					C9941C4C1E00E6EA004C1489 = {
@@ -437,6 +438,7 @@
 			baseConfigurationReference = E07E6F3C28E1A9E60E446592 /* Pods-RxSwiftDemo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 3SMCZ4CV84;
 				INFOPLIST_FILE = RxSwiftDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.caseyliss.RxSwiftDemo;
@@ -450,6 +452,7 @@
 			baseConfigurationReference = 2EB836634BFBD7744F0E01A7 /* Pods-RxSwiftDemo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 3SMCZ4CV84;
 				INFOPLIST_FILE = RxSwiftDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.caseyliss.RxSwiftDemo;

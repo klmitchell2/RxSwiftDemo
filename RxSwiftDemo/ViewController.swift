@@ -10,12 +10,6 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-/*
-- First, we have to create a Driver. The general way to do this is to simply convert an Observable to a Driver using the Observable's asDriver()
--  Given that, it doesn’t usually matter where the conversion to a Driver happens in a chain. I could have done it before the scan above, if I preferred. Just remember everything that comes after will be on the main thread.
--
- */
-
 class ViewController: UIViewController {
 
     // MARK: Outlets
@@ -24,36 +18,40 @@ class ViewController: UIViewController {
     
     // MARK: ivars
     private let disposeBag = DisposeBag()
-    private lazy var viewModel: ViewModel = {
-        return ViewModel(buttonTapped: self.button.rx.tap
-            .asObservable()
-            .debug("after asObservable"))
-    }()
+
+
+    let viewModel = ViewModel()
 
     override func viewDidLoad() {
         setupBindings()
     }
 
     func setupBindings() {
-        self.viewModel.count
-            .asDriver(onErrorJustReturn: 0)
-            .debug("After asDriver")
-            .map { currentCount in
-                return "taps coming from viewModel: \(currentCount)"
-            }
-            .debug("After map")
-            .drive(self.label.rx.text)
-            .disposed(by: disposeBag)
+        button.rx.tap.bind(to: viewModel.buttonTapped).disposed(by: disposeBag)
+        viewModel.labelText.drive(label.rx.text).disposed(by: disposeBag)
     }
 }
 
 class ViewModel {
-    let count: Observable<Int>
+    //private let count = BehaviorRelay<Int>(value: 0) //is mutable even though not var, changing the value property within the BehaviorRelay.
+    private let count: Observable<Int>
+    let labelText: Driver<String>
+    let buttonTapped = PublishRelay<Void>()
 
-    init(buttonTapped: Observable<Void>) {
-        self.count = buttonTapped.scan(0, accumulator: { (prevValue, _) in
-            return prevValue + 1
-        })
-        .debug("After scan")
+    init() {
+        count = buttonTapped.scan(0) { (preValue, _) in
+            return preValue + 1
+        }
+
+        labelText = count.map{ "taps coming from viewModel: \($0)" }.asDriver(onErrorJustReturn: "error")
+
+        /*Can use this approach, but is a bit more fragile with having to subscribe, worry about retain cycles, and disposing of the subscription */
+//        buttonTapped.subscribe(onNext: { [weak self] in
+//            guard let strongself = self else { return }
+//            strongself.count.accept(strongself.count.value + 1)
+//        }).disposed(by: disposeBag) //need dispose bage because we are subscribing
+
     }
 }
+
+
